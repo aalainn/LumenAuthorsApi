@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Author;
+use App\Traits\ApiResponser;
+use Illuminate\Http\Response;
+
 class AuthorController extends Controller
 {
+    use ApiResponser;
     /**
      * Create a new controller instance.
      *
@@ -20,6 +25,9 @@ class AuthorController extends Controller
      */
     public function index()
     {
+        $authors = Author::all();
+        return $this->successResponser($authors);
+
     }
 
     /**
@@ -28,6 +36,19 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+          'name' => 'required|max:255',
+          'gender' => 'required|max:255|in:male, female',
+          'country' => 'required|max:255',
+        ];
+
+        $this->validate($request, $rules);
+
+        $author = Author::create($request->all());
+
+        return $this->successResponser($author, Response::HTTP_CREATED);
+
+
     }
 
     /**
